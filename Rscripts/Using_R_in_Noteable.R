@@ -9,7 +9,7 @@
 
 (3 + 8)^2 - 1*10/6
 
-# changes
+# changes on number
 # Using the c() and cbind() base R functions to combine data values and objects respectively. 
 #Here we are going to use the c() function from the *base* R package to collect data entered at the console. 
 #The c() function in R programming stands for combine. We are then going to name each collection of data and 
