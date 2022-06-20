@@ -1,0 +1,124 @@
+---
+title: "Constructing a data dictionary and appending it to your data in R"
+author: "B209223"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# **Overview**
+The data dictionary contains information about variables, data collection and metadata, faciliating access and communication with other users. To create this data dictionary, the *dataMeta* R package is employed to document information for a subset of stranded patient data from NHSRdatasets. It then will be saved to "RawData" folder.
+
+# **Load packages and read in the data**
+```{r load}
+library(dataMeta) # to construct a data dictionary
+library (tidyverse) # to read in datasets
+library(here) # to reference in data workflows
+```
+
+# **Data**
+The data was subsetted from the stranded patient data from NHSRdatasets and provided information on stranded patients from 2020 Dec to 2021 Feb. Data was captured by the Jupyter Notebook  \"./ipynbScripts/CollectingDataUsingInteractiveJupyterWidgets.ipynb\" and then splited into a training dataset and a testing dataset. It contains one outcome variable (stranded.label) and 3 predictors, namely age, mental_health_care and admit_date. 
+
+Let's use the `read_csv()` function from the *readr* package to read the collected data from the "RawData" folder.
+
+```{r data}
+CollectedData=read_csv(here("RawData", "CollectedDataFinal.csv"))
+```
+
+## **Let's view the CollectedData stranded patient data**
+The glimpse() function helps to view variables and their corresponding data types.
+```{r glimpse1}
+glimpse(CollectedData) 
+```
+
+There are 6 columns in total:
+
+* **index:** the index column that serves to link the testing dataset with the original dataset.
+
+* **stranded.label:** an binary outcome variable - whether patient is stranded or not.
+
+* **age:** age of patients when they were admitted to hospital.
+
+* **mental_health_care:** whether patients need mental health care.
+
+* **admit_date:** dates when patients were admitted to hospital.
+
+* **consent:** consent from users that they allow us to share and process data captured by the data capture tool.
+
+# **Build a data dictionary for the data collected by the data capture tool**
+
+## **Build a linker data frame**
+A dataframe should be set up to present information of data type and description of each variable.
+
+### **Variable descriptions**
+The description of each variable will be presented in a string vector.
+```{r variable_description}
+variable_description <- c("The index column that serves to link the testing dataset with the original dataset", "An binary outcome variable - whether patient is stranded or not", "Age of patients when they were admitted to hospital", "Whether patients need mental health care", "Dates when patients were admitted to hospital", "Consent from users that they allow us to share and process data captured by the data capture tool")
+print(variable_description)
+```
+
+### **Variable types**
+We need to create a string vector representing the different variable types. It is a vector of integers with values 0 or 1, 0 for a variable with quantitative values and 1 for fixed values.
+
+A glimpse() function is used to view data types.
+```{r glimpse2}
+glimpse(CollectedData) 
+```
+We have 4 quantitative and 2 fixed values.
+```{r variable_type}
+variable_type <- c(1, 1, 0, 0, 1, 1)
+print(variable_type)
+```
+
+Now the`build_linker()` function from the *dataMeta* package is used to construct an intermediary (linker) data frame between the CollectedData
+and the data dictionary. For this function to run, it requires the CollectedData data frame and variable_description and variable_type string vectors as inputs.
+```{r build_linker}
+linker<-build_linker(CollectedData, variable_description, variable_type)
+print(linker)
+```
+## **Data dictionary**
+Now we are ready to build a data dictionary with `build_dict()` function from the *dataMeta*. The function requires the CollectedData and linker data frames and variable_description as inputs.
+```{r dictionary}
+dictionary <- build_dict(my.data = CollectedData, linker = linker, option_description = NULL)
+glimpse(dictionary)
+```
+
+### **Let's save the data dictionary for CollectedData to the 'RawData' folder**
+```{r w,message = FALSE, warning = FALSE}
+glimpse(dictionary)
+write_csv(dictionary, here("RawData", "CollectedData_DataDictionary.csv"))
+```
+
+## **Append data dictionary to the CollectedData**
+The 'incorporate_attr()' function from the *dataMeta* package is used to incorporate attributes as metadata.
+```{r main_string}
+main_string <- "This data describes the stranded patient data from 2020 Dec to 2021 Feb from the *NHSRdatasets* package collected by the data capture tool."
+main_string
+```
+
+#### **Incorporate attributes as metada**
+The attributes to be included:
+* a data dictionary
+* number of columns
+* number of rows
+* the name of the author who created the dictionary and added it, 
+* the time when it was last edited 
+* a brief description of the original dataset.
+```{r complete_dataset}
+complete_CollectedData <- incorporate_attr(my.data = CollectedData, data.dictionary = dictionary,
+main_string = main_string)
+#Change the author name
+attributes(complete_CollectedData)$author[1]<-"B209223"
+complete_CollectedData
+attributes(complete_CollectedData)
+```
+
+##### **Save the CollectedData with attributes**
+The 'save_it()' function is used to save the metadata in "RawData" folder.
+```{r save_it}
+save_it(complete_CollectedData, here("RawData", "complete_CollectedData"))
+```
+
+End

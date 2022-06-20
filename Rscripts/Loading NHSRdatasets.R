@@ -1,5 +1,5 @@
 # Title: Loading NHSRdatasets
-# Author details: Author: Charlene ZHAO, contact details: s2272326@ed.ac.uk
+# Author details: Author: B209223, contact details: s2272326@ed.ac.uk
 # Script and data information:
 #This script will load the Stranded Patient dataset from the NHSRdatasets package.
 #It will explore and tabulate data on stranded patient in NHS services and save it to "RawData" folder.
@@ -10,17 +10,19 @@
 
 ## Load packages and data
 # To load the packages
-library(NHSRdatasets)
-library(tidyverse)
-library(here)
-library(knitr)
-library(lubridate)
-library(caret)
+library(NHSRdatasets) #data is from NHSRdatasets
+library(tidyverse) #for data read-in and manipulation
+library(here) #for data workflows
+library(lubridate) #to deal with dates
+library(caret) #to split data into training and testing dataset
+library(knitr) #for dynamic report generation
 
 
 # To load the Stranded Patient dataset from NHSRdataset
 data(stranded_data)
 stranded <- stranded_data
+
+# To check for its class
 class(stranded)
 #Class of stranded is "tbl_df", which means it's a tibble.
 
@@ -32,7 +34,7 @@ stranded
 #Description of selected variables is available on Data Dictionary.
 
 ## To view the stranded patient data.
-#To view variables in this dataframe.
+#A glimpse() function is used to view variables in this dataframe.
 glimpse(stranded)
 #To look at top and bottom rows.
 head(stranded)
@@ -46,11 +48,11 @@ stranded %>%
 #We will leave them here because this variable is irrelevant to this study and will not be included in further analysis.
 
 ## To add an index column to standed patient data.
-#Index column is set to link raw data with partitioned datasets.
+#Index column is set to link raw data with partitioned datasets.The rowid_to_column() can set index.
 stranded <- rowid_to_column(stranded, "index")
 
 ## To convert variable admit_date into a date variable
-#The admit_date is a character variable but we would like it to be a date and in date format, so a conversion is done here.
+#The admit_date is a character variable but we would like it to be a date and in date format, so a conversion is done here with a as.Date() function
 stranded$admit_date <- as.Date(stranded$admit_date, format = "%d/%m/%Y")
 
 ## To tabulate the raw data
@@ -72,17 +74,18 @@ glimpse(stranded_4var)
 write_csv(stranded_4var, here("RawData", "stranded_4var.csv"))
 
 ## To split the stranded_4var data into training and testing datasets
-#The dataset has 768 rows of data.
 nrow(stranded_4var)
+#The dataset has 768 rows of data.
 
 #A testing dataset of 10-15 records is sufficient to evaluate the data capture tool. So the proportion of the raw data assigning to the training dataset is:
-prop<-(1-(15/nrow(stranded_4var))) #0.9804688, so 2% to testing dataset and 98% to training dataset
+prop<-(1-(15/nrow(stranded_4var))) #0.9804688, so 2% to testing dataset and 98% to training dataset.
 print(prop)
 
 ## To split the stranded_4var data into testing and training dataset
+# A random seed is generated to ensure outputs are reproducible.
 set.seed(42)
 
-# To set up the training dataset
+# To set up the training dataset. The function createDataPartition() helps to split datasets randomly with indexing.
 trainIndex <- createDataPartition(stranded_4var$index, p = prop, 
                                   list = FALSE, 
                                   times = 1)
@@ -90,14 +93,15 @@ head(trainIndex)
 stranded_train <- stranded_4var[ trainIndex,]
 nrow(stranded_train)
 # There are 756 rows in the training dataset.
+
 # To tabulate the training dataset and save to "Data" folder.
 kable(stranded_train)
 write_csv(stranded_train, here("Data", "stranded_train.csv"))
 
-# To set up the testing dataset
+# To set up the testing dataset by removing the training dataset from the original dataset.
 stranded_test <- stranded_4var[-trainIndex,]
 nrow(stranded_test)
-# There are 12 rows in the testing dataset.
+# There are 12 rows in the testing dataset, sufficient to evaluate the data capture tool.
 
 # To set aside one record for test markers, tabulate and save to "Data" folder.
 stranded_TestMarker <- stranded_test[1, ]
