@@ -82,7 +82,7 @@ prop<-(1-(15/nrow(stranded_4var))) #0.9804688, so 2% to testing dataset and 98% 
 print(prop)
 
 ## To split the stranded_4var data into testing and training dataset
-# A random seed is generated to ensure outputs are reproducible.
+# A random seed is set to ensure outputs are reproducible.
 set.seed(42)
 
 # To set up the training dataset. The function createDataPartition() helps to split datasets randomly with indexing.
