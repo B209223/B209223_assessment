@@ -1,7 +1,7 @@
-variable name,variable description,variable options,notes
-admit_date,Dates when patients were admitted to hospital,18629,
-age,Age of patients when they were admitted to hospital,26 to 26,
-consent,Consent from users that they allow us to share and process data captured by the data capture tool,TRUE,
-index,The index column that serves to link the testing dataset with the original dataset,7,
-mental_health_care,Whether patients need mental health care,0 to 0,
-stranded.label,An binary outcome variable - whether patient is stranded or not,Not Stranded,
+variable_name,variable_description,variable_options
+admit_date,Dates when patients were admitted to hospital,18629
+age,Age of patients when they were admitted to hospital,26 to 26
+consent,Consent from users that they allow us to share and process data captured by the data capture tool,TRUE
+index,The index column that serves to link the testing dataset with the original dataset,7
+mental_health_care,Whether patients need mental health care,0 to 0
+stranded.label,An binary outcome variable - whether patient is stranded or not,Not Stranded
