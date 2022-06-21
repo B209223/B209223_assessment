@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # **Overview**
-The data dictionary contains information about variables, data collection and metadata, faciliating access and communication with other users. To create this data dictionary, the *dataMeta* R package is employed to document information for a subset of stranded patient data from NHSRdatasets. It then will be saved to "RawData" folder.
+The data dictionary contains information about variables, data collection and metadata, facilitating access and communication with other users. To create this data dictionary, the *dataMeta* R package is employed to document information for a subset of stranded patient data from NHSRdatasets. It then will be saved to "RawData" folder.
 
 # **Load packages and read in the data**
 ```{r load}
@@ -50,7 +50,7 @@ There are 6 columns in total:
 # **Build a data dictionary for the data collected by the data capture tool**
 
 ## **Build a linker data frame**
-A dataframe should be set up to present information of data type and description of each variable.
+A dataframe will be set up to present data type and description of each variable.
 
 ### **Variable descriptions**
 The description of each variable will be presented in a string vector.
