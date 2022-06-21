@@ -254,7 +254,7 @@ print(linker)
 Now we are ready to build a data dictionary with `build_dict()` function from the *dataMeta*. The function requires the CollectedData and linker data frames and variable_description as inputs.
 
 ```{r dictionary, echo = T, results = 'hide'}
-dictionary <- build_dict(my.data = CollectedData, linker = linker, option_description = NULL)
+dictionary <- build_dict(my.data = CollectedData, linker = linker, option_description = NULL, prompt_varopts = FALSE)
 glimpse(dictionary)
 ```
 
