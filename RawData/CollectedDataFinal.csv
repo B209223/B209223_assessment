@@ -1,2 +1,13 @@
 index,stranded.label,age,mental_health_care,admit_date,consent
 7,Not Stranded,26,0,2021-01-02,True
+135,Not Stranded,26,0,2021-01-20,True
+157,Not Stranded,21,0,2021-01-02,True
+269,Stranded,21,0,2021-02-05,True
+299,Not Stranded,67,0,2021-01-27,True
+335,Stranded,79,1,2020-12-18,True
+434,Not Stranded,72,1,2021-01-21,True
+496,Not Stranded,66,0,2021-02-04,True
+540,Not Stranded,32,0,2021-01-21,True
+663,Not Stranded,72,1,2021-01-28,True
+663,Stranded,67,0,2021-01-15,True
+723,Stranded,42,1,2020-12-12,True
