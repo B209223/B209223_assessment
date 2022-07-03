@@ -12,10 +12,13 @@
 # To load the packages
 library(NHSRdatasets) #data is from NHSRdatasets
 library(tidyverse) #for data read-in and manipulation
+library(ggplot2) #for data visualisation
 library(here) #for data workflows
 library(lubridate) #to deal with dates
 library(caret) #to split data into training and testing dataset
 library(knitr) #for dynamic report generation
+library(gtsummary) #for descriptive statistics
+
 
 
 # To load the Stranded Patient dataset from NHSRdataset
@@ -61,6 +64,36 @@ kable(stranded)
 ## To save the raw stranded patient data to "RawData" folder
 write_csv(stranded, here("RawData", "stranded.csv"))
 
+## To visualise the relationship between the outcome variable (stranded label) and predictors (age, mental_health_care and admit_date).
+#Relationship between stranded label and age
+stranded %>% select(stranded.label,age) %>%
+  ggplot(aes(x = stranded.label, y = age)) +
+  geom_boxplot() +
+  ggtitle("Relationship between stranded label and age of patients") +
+  xlab("Stranded label") +
+  ylab("Age of patients") +
+  theme_classic()
+ggsave(filename = here("Figures","age_stranded.bmp"))
+#The plot shows there are differences on ages between two groups.
+
+#Relationship between stranded label and mental health care service needed
+mental_health <- stranded %>% 
+  select(stranded.label, mental_health_care) %>%
+  mutate(mental_health_care_needed = ifelse(mental_health_care == 0, "No", "Yes"))
+count <- table(mental_health$stranded.label,mental_health$mental_health_care_needed)
+mosaicplot(count, main = "Relationship between stranded label and needs of mental health care",
+           xlab = "Stranded label", ylab = "Whether patients need mental health care")
+ggsave(filename = here("Figures","mental_care_stranded.bmp"))
+#The mosaic plot indicates on differences between two groups.
+
+#Relationship between stranded label and admit date
+cdplot(factor(stranded$stranded.label) ~ stranded$admit_date,
+       main = "Relationship between stranded label and admit date", 
+       xlab = "Admit date",
+       ylab = "Stranded label")
+ggsave(filename = here("Figures","dates.bmp"))
+#The mosaic plot indicates on differences between two groups.
+
 ## To select variables for the data capture tool
 #The project intends to explore relationship between one outcome (stranded vs non-stranded) and 3 predictors, namely age, mental_health_care and admit_date.
 #So only 4 variables will be selected, namely stranded.label, age, mental_health_care and admit_date along with index.
@@ -76,6 +109,13 @@ write_csv(stranded_4var, here("RawData", "stranded_4var.csv"))
 ## To split the stranded_4var data into training and testing datasets
 nrow(stranded_4var)
 #The dataset has 768 rows of data.
+
+## To have a descriptive statistics on subsetted data
+stranded_4var$mental_health_care <- factor(stranded_4var$mental_health_care) 
+tbl_summary(stranded_4var) %>% 
+  bold_labels() %>%
+  modify_caption("**Summary Statistics**")
+ggsave(filename = here("Tables","summary.bmp"))
 
 #A testing dataset of 10-15 records is sufficient to evaluate the data capture tool. So the proportion of the raw data assigning to the training dataset is:
 prop<-(1-(15/nrow(stranded_4var))) #0.9804688, so 2% to testing dataset and 98% to training dataset.
